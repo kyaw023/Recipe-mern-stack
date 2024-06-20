@@ -103,14 +103,16 @@ const RecipesFormPage = () => {
         res = await axios.post("/api/recipes", recipe);
       }
 
-      const formData = new FormData();
-      formData.set("photo", file);
+      if (file) {
+        const formData = new FormData();
+        formData.set("photo", file);
 
-      await axios.post(`/api/recipes/${res?.data?._id}/upload`, formData, {
-        headers: {
-          Accept: "multipart/form-data",
-        },
-      });
+        await axios.post(`/api/recipes/${res?.data?._id}/upload`, formData, {
+          headers: {
+            Accept: "multipart/form-data",
+          },
+        });
+      }
 
       if (res.status === 200) {
         nav("/");
@@ -119,7 +121,7 @@ const RecipesFormPage = () => {
         );
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Something went wrong!");
     }
   };
 
@@ -259,10 +261,10 @@ const RecipesFormPage = () => {
                 />
               </div>
             </CardContent>
-            <CardFooter className=" space-x-3">
-              <Button className=" w-full rounded mt-4 border">
-                <Link to={"/"}>Cancel</Link>
-              </Button>
+            <CardFooter className=" space-x-3  flex items-center">
+              <Link className=" w-full" to={"/"}>
+                <Button className=" w-full rounded mt-4 border">Cancel</Button>
+              </Link>
               <Button className=" w-full rounded mt-4 bg-green-400 text-white hover:bg-green-500">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {`${id ? "Update" : "Add"}`}

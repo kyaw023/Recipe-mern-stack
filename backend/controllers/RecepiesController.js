@@ -123,13 +123,19 @@ const RecipesController = {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ msg: "Not Valid Id" });
       }
+      const existedRecipe = await Recipes.findById(id);
+      console.log(existedRecipe, req?.file?.filename);
+      if (existedRecipe?.photo && req?.file?.filename) {
+        await removeFile(__dirname + "/../public" + existedRecipe.photo);
+      }
       const recipe = await Recipes.findByIdAndUpdate(id, req.body);
-      await removeFile(__dirname + "/../public" + recipe.photo);
+
       if (!recipe) {
         return res.status(404).json({ msg: "No Recipe Found!" });
       }
       return res.json(recipe);
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ msg: "Internet Server Error" });
     }
   },
@@ -157,6 +163,12 @@ const RecipesController = {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ msg: "Not Valid Id" });
       }
+
+      const existedRecipe = await Recipes.findById(id);
+
+      if (existedRecipe?.photo && req?.file?.filename) {
+        await removeFile(__dirname + "/../public" + existedRecipe.photo);
+      }
       const recipe = await Recipes.findByIdAndUpdate(id, {
         photo: "/" + req.file.filename,
       });
@@ -166,6 +178,7 @@ const RecipesController = {
       }
       return res.json(recipe);
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ msg: "Internet Server Error" });
     }
   },

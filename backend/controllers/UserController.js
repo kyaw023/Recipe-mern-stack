@@ -18,6 +18,7 @@ const UserController = {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ msg: "Not Valid Id" });
       }
+      const existedUser = await User.findById(id);
       const user = await User.updateProfile(
         id,
         name,
@@ -27,7 +28,9 @@ const UserController = {
         password
       );
 
-      await removeFile(__dirname + "/../public" + user.photo);
+      if (existedUser.photo && req?.file?.filename) {
+        await removeFile(__dirname + "/../public" + existedUser.photo);
+      }
       if (!user) {
         return res.status(404).json({ msg: "No User Found!" });
       }
@@ -82,7 +85,7 @@ const UserController = {
   getFavorites: async (req, res) => {
     try {
       const userId = req.params.userId;
-      console.log(userId);
+
       if (!mongoose.Types.ObjectId.isValid(userId)) {
         return res.status(400).json({ msg: "Not Valid Id" });
       }
@@ -181,6 +184,12 @@ const UserController = {
         return res.status(400).json({ msg: "Not Valid Id" });
       }
 
+      const existedUser = await User.findById(id);
+
+      if (existedUser.photo && req.file.filename) {
+        await removeFile(__dirname + "/../public" + existedUser.photo);
+      }
+
       const user = await User.findByIdAndUpdate(
         id,
         {
@@ -190,12 +199,13 @@ const UserController = {
           new: true,
         }
       );
-      console.log(user);
+
       if (!user) {
         return res.status(404).json({ msg: "No User Found!" });
       }
       return res.json(user);
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ msg: "Internet Server Error" });
     }
   },

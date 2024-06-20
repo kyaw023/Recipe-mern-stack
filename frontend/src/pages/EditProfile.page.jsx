@@ -48,6 +48,7 @@ const EditProfilePage = () => {
   useEffect(() => {
     (async () => {
       const res = await axios.get("/api/users/me");
+      console.log(res);
       setProfilePicture(
         import.meta.env.VITE_BACKEND_ASSET_URL + res.data.photo
       );
@@ -102,6 +103,7 @@ const EditProfilePage = () => {
       setPassword(null);
     } catch (error) {
       setIsError(error);
+      console.log(error);
       toast.error(error.response.data.msg);
       setPassword(null);
     }

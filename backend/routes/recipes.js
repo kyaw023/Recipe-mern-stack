@@ -3,6 +3,7 @@ const RecipesController = require("../controllers/RecepiesController");
 const { body } = require("express-validator");
 const handleErrorMessage = require("../middlewares/handleErrorMessage");
 const uploadImg = require("../helpers/upload");
+const Recipes = require("../models/Recipes");
 const {
   getRecipes,
   getSingleRecipes,
@@ -31,12 +32,17 @@ router.post(
   "/:id/upload",
   [
     uploadImg.single("photo"),
-    body("photo").custom((value, { req }) => {
+    body("photo").custom(async (value, { req }) => {
+      const recipeId = req.params.id; // Get recipe ID from request parameters
       if (!req.file) {
-        throw new Error("photo must be required");
-      }
-      if (!req.file.mimetype.startsWith("image")) {
-        throw new Error("photo must be image");
+        const recipe = await Recipes.findById(recipeId);
+        if (!recipe || !recipe.photo) {
+          throw new Error("Photo must be required");
+        }
+      } else {
+        if (!req.file.mimetype.startsWith("image")) {
+          throw new Error("Photo must be an image");
+        }
       }
       return true;
     }),

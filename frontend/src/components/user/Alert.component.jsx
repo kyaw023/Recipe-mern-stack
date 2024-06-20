@@ -12,7 +12,7 @@ import { Input } from "../ui/input";
 const AlertComponent = ({ password, setPassword }) => {
   return (
     <div className=" space-x-2.5">
-      <DialogContent className="sm:max-w-[425px] bg-white rounded-xl">
+      <DialogContent className="sm:max-w-[425px] bg-white rounded-2xl">
         <DialogHeader>
           <DialogDescription>
             <div className=" space-y-3 mb-3">

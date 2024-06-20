@@ -88,7 +88,7 @@ const CommentComponent = ({ comments, state, recipe, setComments }) => {
                           <AvatarImage
                             src={
                               import.meta.env.VITE_BACKEND_ASSET_URL +
-                              state?.user.photo
+                              comment?.user?.photo
                             }
                             alt="@shadcn"
                           />

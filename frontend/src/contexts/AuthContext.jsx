@@ -17,7 +17,6 @@ const AuthReducer = (state, action) => {
       localStorage.removeItem("user");
       return { ...state, user: null, loading: false };
     case "UPDATE_USER":
-      console.log(action.payload);
       const updatedUser = { ...state.user, photo: action.payload };
       localStorage.setItem("user", JSON.stringify(updatedUser));
       return { ...state, user: updatedUser };

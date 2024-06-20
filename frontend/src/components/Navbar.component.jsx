@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { AuthContext } from "../contexts/AuthContext";
 import { ProfileComponent } from ".";
 import { SearchContext } from "../contexts/SearchContext";
-import useFetch from "../Hook/useFetch";
+
 
 const NavbarComponent = () => {
   const nav = useNavigate();
@@ -18,8 +18,6 @@ const NavbarComponent = () => {
   const { state } = useContext(AuthContext);
 
   const { user, loading } = state;
-
-  console.log(user);
 
   const onsubmitHandler = (e) => {
     e.preventDefault();
