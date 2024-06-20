@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,6 +22,7 @@ import {
   SelectComponent,
   TextareaComponent,
 } from "../components";
+import { AuthContext } from "../contexts/AuthContext";
 
 const EditProfilePage = () => {
   const { id } = useParams();
@@ -39,10 +40,17 @@ const EditProfilePage = () => {
   const [emailEdit, setEmailEdit] = useState(false);
   const [password, setPassword] = useState("");
   const [isError, setIsError] = useState(null);
+  const [file, setFile] = useState(null);
+  const [profilePicture, setProfilePicture] = useState(null);
+
+  const { updateUser } = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
       const res = await axios.get("/api/users/me");
+      setProfilePicture(
+        import.meta.env.VITE_BACKEND_ASSET_URL + res.data.photo
+      );
       setUserInfo({
         name: res.data.name,
         email: res.data.email,
@@ -76,12 +84,42 @@ const EditProfilePage = () => {
         nav("/");
         toast.success(`Your profile have been updated successfully`);
       }
+
+      let formData = new FormData();
+
+      formData.set("photo", file);
+      const updateUserDataFun = await axios.post(
+        `/api/users/${id}/upload`,
+        formData,
+        {
+          headers: {
+            Accept: "multipart/form-data",
+          },
+        }
+      );
+
+      updateUser(updateUserDataFun?.data?.photo);
       setPassword(null);
     } catch (error) {
       setIsError(error);
       toast.error(error.response.data.msg);
       setPassword(null);
     }
+    setEmailEdit(false);
+    setNameEdit(false);
+  };
+
+  const uploadPicture = (e) => {
+    let file = e.target.files[0];
+    setFile(file);
+
+    let fileReader = new FileReader();
+
+    fileReader.onload = (e) => {
+      setProfilePicture(e.target.result);
+    };
+
+    fileReader.readAsDataURL(file);
   };
   return (
     <div>
@@ -93,29 +131,28 @@ const EditProfilePage = () => {
           <Card className="w-[350px] h-[250px] rounded-xl py-2">
             <CardContent className=" px-8 py-2">
               <div className=" mb-2 space-y-3">
-                <img
-                  className=" w-[100px] h-[100px] rounded-2xl border "
-                  src={
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvvTNp33bnN4rL1z48GRpWNgAL22_6VY2Iqw&s"
-                  }
-                  alt=""
-                />
+                {profilePicture && (
+                  <img
+                    className=" w-[100px] h-[100px] rounded-2xl border object-cover"
+                    src={profilePicture}
+                    alt=""
+                  />
+                )}
                 <div className=" space-y-1">
                   <h1 className=" font-semibold text-lg">Your Photo</h1>
                   <p className=" text-sm text-slate-500">
                     This will be displayed on your profile
                   </p>
                 </div>
-                <div className=" space-x-3">
-                  <Button size="sm" className=" border rounded-xl">
-                    Upload New
-                  </Button>
-                  <Button
-                    size="sm"
-                    className=" border rounded-xl bg-blue-500 text-white"
-                  >
-                    Save
-                  </Button>
+                <div className=" space-x-3 flex items-center">
+                  <div className="grid w-full max-w-sm items-center gap-1.5 rounded-xl">
+                    <Input
+                      onChange={uploadPicture}
+                      id="picture"
+                      type="file"
+                      className=" rounded-xl"
+                    />
+                  </div>
                 </div>
               </div>
             </CardContent>

@@ -8,3 +8,4 @@ export { default as LoginPage } from "./Auth/Login.page.jsx";
 export { default as SearchPage } from "./Search.page.jsx";
 export { default as EditProfilePage } from "./EditProfile.page.jsx";
 export { default as FavoritePage } from "./Favorite.page.jsx";
+

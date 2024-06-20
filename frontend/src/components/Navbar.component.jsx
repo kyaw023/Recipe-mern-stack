@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -7,12 +7,19 @@ import { toast } from "sonner";
 import { AuthContext } from "../contexts/AuthContext";
 import { ProfileComponent } from ".";
 import { SearchContext } from "../contexts/SearchContext";
+import useFetch from "../Hook/useFetch";
 
 const NavbarComponent = () => {
   const nav = useNavigate();
   const [queryValue, setQueryValue] = useState("");
-  const { dispatch, state } = useContext(AuthContext);
+  const { dispatch } = useContext(AuthContext);
   const { searchHandler } = useContext(SearchContext);
+
+  const { state } = useContext(AuthContext);
+
+  const { user, loading } = state;
+
+  console.log(user);
 
   const onsubmitHandler = (e) => {
     e.preventDefault();
@@ -30,7 +37,7 @@ const NavbarComponent = () => {
     }
   };
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <section className=" fixed w-full shadow-sm bg-white">
@@ -70,12 +77,14 @@ const NavbarComponent = () => {
             </div>
 
             <div>
-              {state?.user ? (
+              {user ? (
                 <div className=" flex items-center space-x-2">
                   <div>
                     <ProfileComponent
+                      isLoading={loading}
                       id={user?._id}
                       logoutHandler={logoutHandler}
+                      photo={user?.photo}
                     />
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const removeFile = require("../helpers/removeFile");
 const createToken = require("../helpers/createToken");
 const mongoose = require("mongoose");
 const Recipes = require("../models/Recipes");
@@ -7,13 +8,12 @@ const UserController = {
   me: async (req, res) => {
     return res.json(req.user);
   },
+
   editProfile: async (req, res) => {
     try {
       const id = req.params.id;
 
       const { name, email, bio, role, password } = req.body;
-
-      console.log(name, email, bio, role, password);
 
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ msg: "Not Valid Id" });
@@ -27,7 +27,7 @@ const UserController = {
         password
       );
 
-      //await removeFile(__dirname + "/../public" + recipe.photo);
+      await removeFile(__dirname + "/../public" + user.photo);
       if (!user) {
         return res.status(404).json({ msg: "No User Found!" });
       }
@@ -36,6 +36,7 @@ const UserController = {
       return res.status(401).json({ msg: error.message });
     }
   },
+
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -50,6 +51,7 @@ const UserController = {
       return res.status(400).json({ error: e.message });
     }
   },
+
   register: async (req, res) => {
     try {
       const { name, email, password } = req.body;
@@ -76,6 +78,7 @@ const UserController = {
       return res.status(404).json({ error: e.message });
     }
   },
+
   getFavorites: async (req, res) => {
     try {
       const userId = req.params.userId;
@@ -102,8 +105,6 @@ const UserController = {
       // get  recipeId
       const { recipeId } = req.body;
 
-      console.log(recipeId);
-
       // check user id is valid
       if (!mongoose.Types.ObjectId.isValid(userId)) {
         return res.status(400).json({ msg: "Not Valid User Id" });
@@ -111,8 +112,6 @@ const UserController = {
 
       // check user is loggin
       const isUserExisted = await User.findById(userId);
-
-      console.log(isUserExisted);
 
       if (!isUserExisted) {
         return res.json({ msg: "Not user found" });
@@ -147,7 +146,7 @@ const UserController = {
     try {
       const userId = req.params.userId;
       const recipeId = req.params.id;
-      console.log(recipeId);
+
       if (!mongoose.Types.ObjectId.isValid(userId)) {
         return res.status(400).json({ msg: "Not Valid User Id" });
       }
@@ -173,6 +172,31 @@ const UserController = {
       return res.status(200).json(isUserExisted.favoritesRecipes);
     } catch (error) {
       return res.status(500).json({ msg: error.message });
+    }
+  },
+  uploadPhoto: async (req, res) => {
+    try {
+      const id = req.params.id;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ msg: "Not Valid Id" });
+      }
+
+      const user = await User.findByIdAndUpdate(
+        id,
+        {
+          photo: "/" + req.file.filename,
+        },
+        {
+          new: true,
+        }
+      );
+      console.log(user);
+      if (!user) {
+        return res.status(404).json({ msg: "No User Found!" });
+      }
+      return res.json(user);
+    } catch (error) {
+      return res.status(500).json({ msg: "Internet Server Error" });
     }
   },
 };

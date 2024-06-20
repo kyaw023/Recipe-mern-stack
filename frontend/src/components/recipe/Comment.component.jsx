@@ -20,7 +20,6 @@ import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 
 const CommentComponent = ({ comments, state, recipe, setComments }) => {
-  console.log(comments);
   const [editComment, setEditComment] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -87,10 +86,13 @@ const CommentComponent = ({ comments, state, recipe, setComments }) => {
                       <div className="flex items-center space-x-6 p-4">
                         <Avatar>
                           <AvatarImage
-                            src="https://github.com/shadcn.png"
+                            src={
+                              import.meta.env.VITE_BACKEND_ASSET_URL +
+                              state?.user.photo
+                            }
                             alt="@shadcn"
                           />
-                          <AvatarFallback>/AvatarFallbac </AvatarFallback>
+                          <AvatarFallback>{state?.user?.name}</AvatarFallback>
                         </Avatar>
                         <div>
                           <h1 className=" text-lg font-semibold capitalize">

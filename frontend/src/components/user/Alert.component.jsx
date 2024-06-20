@@ -27,11 +27,19 @@ const AlertComponent = ({ password, setPassword }) => {
                 className="text-xs md:text-sm rounded"
               />
             </div>
-            <DialogClose>
-              <Button className=" bg-black text-white rounded-xl hover:bg-slate-700 active:scale-105">
-                Done
-              </Button>
-            </DialogClose>
+            <div>
+              <DialogClose>
+                <Button
+                  size={"lg"}
+                  className=" bg-black text-white rounded-xl hover:bg-slate-700 active:scale-105"
+                >
+                  Done
+                </Button>
+              </DialogClose>
+              <p className=" text-xs  text-red-400 mt-3">
+                If you saved password, click again save button
+              </p>
+            </div>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
