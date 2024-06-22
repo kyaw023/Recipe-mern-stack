@@ -47,5 +47,7 @@ router.post(
   handleErrorMessage,
   UserController.register
 );
+router.post("/request-reset", UserController.requestEmail);
+router.post("/reset-password", UserController.resetPassword);
 
 module.exports = router;

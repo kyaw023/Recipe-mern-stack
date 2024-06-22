@@ -2,7 +2,7 @@ const removeFile = require("../helpers/removeFile");
 const Recipes = require("../models/Recipes");
 const mongoose = require("mongoose");
 const User = require("../models/User");
-const emailQueue = require("../queues/emailQueues");
+const emailQueue = require("../queues/emailQueue");
 
 const RecipesController = {
   getRecipes: async (req, res) => {
@@ -67,12 +67,14 @@ const RecipesController = {
         prep_time,
         cook_time,
       } = req.body;
+
       const recipe = await Recipes.create({
         title,
         description,
         ingredients,
         instructions,
         servings,
+        createdBy: req.user._id,
         prep_time,
         cook_time,
       });
@@ -84,7 +86,7 @@ const RecipesController = {
       const filterEmails = emails.filter((email) => email !== req.user.email);
 
       emailQueue.add({
-        path: "email",
+        view: "email",
         data: {
           name: req.user.name,
           recipe,
@@ -93,10 +95,12 @@ const RecipesController = {
         to: filterEmails,
         subject: `New Recipe is created by ${req.user.name}`,
       });
+      const populatedRecipe = await Recipes.findById(recipe._id).populate(
+        "createdBy"
+      );
 
-      return res.json(recipe);
+      return res.json(populatedRecipe);
     } catch (error) {
-      console.log(error);
       return res.status(404).json({ msg: "Invalid Field" });
     }
   },

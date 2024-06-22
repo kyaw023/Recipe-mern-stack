@@ -8,4 +8,7 @@ export { default as LoginPage } from "./Auth/Login.page.jsx";
 export { default as SearchPage } from "./Search.page.jsx";
 export { default as EditProfilePage } from "./EditProfile.page.jsx";
 export { default as FavoritePage } from "./Favorite.page.jsx";
-
+export { default as ResetPasswordPage } from "./ResetPassword.page.jsx";
+export { default as AdminDashboardPage } from "./Admin/AdminDashboard.page.jsx";
+export { default as AdminUsersPage } from "./Admin/AdminUsers.page.jsx";
+export { default as AdminRecipesPage } from "./Admin/AdminRecipes.page.jsx";

@@ -9,6 +9,7 @@ import {
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { Link } from "react-router-dom";
 const AlertComponent = ({ password, setPassword }) => {
   return (
     <div className=" space-x-2.5">
@@ -61,7 +62,9 @@ const AlertComponent = ({ password, setPassword }) => {
         </DialogTrigger>
       )}
 
-      <Button className=" border rounded-xl">Cancel</Button>
+      <Link to={"/"}>
+        <Button className=" border rounded-xl">Cancel</Button>
+      </Link>
     </div>
   );
 };

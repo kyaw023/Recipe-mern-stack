@@ -30,11 +30,11 @@ const RecipesCardComponent = ({ recipe, deleteRecipesHandlerOnClient }) => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const res = await axios.get(`/api/users/${state.user._id}/favorites`);
+      const res = await axios.get(`/api/users/${state.user?._id}/favorites`);
       setFavLists(res.data);
       setLoading(false);
     })();
-  }, [state.user._id]);
+  }, [state.user?._id]);
 
   useEffect(() => {
     setAddFav(
@@ -46,7 +46,7 @@ const RecipesCardComponent = ({ recipe, deleteRecipesHandlerOnClient }) => {
 
   const addToFavorite = async () => {
     try {
-      const res = await axios.post(`/api/users/${state.user._id}/favorites`, {
+      const res = await axios.post(`/api/users/${state.user?._id}/favorites`, {
         recipeId: recipe?._id,
       });
 

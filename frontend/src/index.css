@@ -11,3 +11,7 @@
 .active {
   @apply text-green-400;
 }
+
+body {
+  @apply bg-slate-200
+}

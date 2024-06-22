@@ -32,6 +32,7 @@ const RecipeSchema = new Schema(
     cook_time: {
       type: String,
     },
+    createdBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,

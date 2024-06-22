@@ -1,29 +1,27 @@
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
 
-const sendEmail = async ({ path, data, from, to, subject }) => {
+let sendEmail = async ({ view, data, from, to, subject }) => {
   try {
     var transport = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: process.env.MAIL_PORT,
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MIAL_PASS,
+        pass: process.env.MAIL_PASS,
       },
     });
 
-    const dataString = await ejs.renderFile(`./views/${path}.ejs`, data);
-
-    const info = transport.sendMail({
-      from, // sender address
-      to, // list of receivers
-      subject, // Subject line
+    let dataString = await ejs.renderFile("./views/" + view + ".ejs", data);
+    const info = await transport.sendMail({
+      from,
+      to,
+      subject,
       html: dataString, // html body
     });
-
     console.log("Message sent: %s", info.messageId);
-  } catch (error) {
-    throw new Error(error);
+  } catch (e) {
+    throw new Error(e);
   }
 };
 

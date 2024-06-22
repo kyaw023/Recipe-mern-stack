@@ -4,6 +4,10 @@ const createToken = require("../helpers/createToken");
 const mongoose = require("mongoose");
 const Recipes = require("../models/Recipes");
 
+const sendEmail = require("../helpers/sendEmail");
+
+const bcrypt = require("bcrypt");
+
 const UserController = {
   me: async (req, res) => {
     return res.json(req.user);
@@ -207,6 +211,53 @@ const UserController = {
     } catch (error) {
       console.log(error);
       return res.status(500).json({ msg: "Internet Server Error" });
+    }
+  },
+  requestEmail: async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+      const resetUrl = `http://localhost:5173/reset-password/${user._id}`;
+
+      sendEmail({
+        view: "resetEmail",
+        data: {
+          userName: user.name,
+          resetLink: resetUrl,
+        },
+        from: "mateam@gmail.com",
+        to: email,
+        subject: " Password Reset Request",
+      });
+      return res.json({ msg: "We will sent link to your gmail account" });
+    } catch (error) {
+      console.log(error);
+      return res.status(404).json({ msg: "Invalid Field" });
+    }
+  },
+  resetPassword: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+      const salt = await bcrypt.genSalt();
+
+      const hashCode = await bcrypt.hash(password, salt);
+      user.password = hashCode; // Ensure to hash the password before saving
+      await user.save();
+      return res.json({ msg: "password changed" });
+    } catch (error) {
+      console.log(error);
+      return res.status(404).json({ msg: "Invalid Field" });
     }
   },
 };

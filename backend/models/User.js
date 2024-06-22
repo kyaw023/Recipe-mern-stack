@@ -2,33 +2,36 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 
-const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+const UserSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    photo: {
+      type: String,
+    },
+    bio: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: ["user", "chef", "admin"], // Add roles you want to support
+      default: "user",
+    },
+    favoritesRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }],
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  photo: {
-    type: String,
-  },
-  bio: {
-    type: String,
-  },
-  role: {
-    type: String,
-    enum: ["user", "chef"], // Add roles you want to support
-    default: "user",
-  },
-  favoritesRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }],
-});
+  { timestamps: true }
+);
 
 UserSchema.statics.register = async function (name, email, password) {
   const isUserExisted = await this.findOne({ email });
@@ -78,6 +81,7 @@ UserSchema.statics.login = async function (email, password) {
     throw new Error("email does not exist");
   }
 
+  console.log();
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
   if (isPasswordCorrect) {

@@ -6,11 +6,13 @@ const cors = require("cors");
 const recipeRoutes = require("./routes/recipes");
 const usersRoutes = require("./routes/users");
 const commentsRoutes = require("./routes/comments");
+const adminRoutes = require("./routes/admin");
 const cookieParser = require("cookie-parser");
 const AuthMiddleware = require("./middlewares/AuthMiddleware");
 const cron = require("node-cron");
 
 const sendEmail = require("./helpers/sendEmail");
+const AdminMiddleware = require("./middlewares/AdminMiddleware");
 const url =
   "mongodb+srv://kyawkhainglynn023:kyaw201218@cluster0.jsbq5tk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
@@ -51,6 +53,7 @@ app.get("/", (req, res) => {
 app.use("/api/recipes", AuthMiddleware, recipeRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/comments", AuthMiddleware, commentsRoutes);
+app.use("/api/admin",AuthMiddleware, AdminMiddleware, adminRoutes);
 app.get("/send-email", async (req, res) => {
   try {
     await sendEmail({
